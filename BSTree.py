@@ -29,26 +29,67 @@ class BasicBinarySearchTree:
         if key < node.key:
             return self._basic_search(node.left, key)
         return self._basic_search(node.right, key)
-    
-    def inorder_traversal(self):
-        self._inorder_traversal(self.root)
-        print()
 
-    def _inorder_traversal(self, node):
+    def basic_delete(self, key):
+        self.root = self._basic_delete(self.root, key)
+
+    def _basic_delete(self, node, key):
+        if node is None:
+            return node
+
+        if key < node.key:
+            node.left = self._basic_delete(node.left, key)
+        elif key > node.key:
+            node.right = self._basic_delete(node.right, key)
+        else:
+            if node.left is None:
+                return node.right
+            elif node.right is None:
+                return node.left
+            else:
+                successor = self._basic_find_min(node.right)
+                node.key = successor.key
+                node.right = self._basic_delete(node.right, successor.key)
+        return node
+
+    def _basic_find_min(self, node):
+        current = node
+        while current.left:
+            current = current.left
+        return current
+
+    def inorder_traversal(self, node):
         if node is not None:
-            self._inorder_traversal(node.left)
+            self.inorder_traversal(node.left)
             print(node.key, end=" ")
-            self._inorder_traversal(node.right)
+            self.inorder_traversal(node.right)
+
 # Test
 bbst = BasicBinarySearchTree()
 keys = [8, 3, 10, 1, 6, 14, 4, 7, 13]
 for key in keys:
     bbst.basic_insert(key)
 
-# assert bbst.basic_search(6).key == 6
-# assert bbst.basic_search(12) is None
-bbst.inorder_traversal()
+print("Inorder traversal:")
+bbst.inorder_traversal(bbst.root)
+print()
+
+# Search test
+assert bbst.basic_search(6).key == 6
+assert bbst.basic_search(12) is None
+
+# Delete test
+bbst.basic_delete(6)
+print("Inorder traversal after deleting 6:")
+bbst.inorder_traversal(bbst.root)
+print()
+assert bbst.basic_search(6) is None
+
+
 
 #OUTPUT
 C:\Users\OMER\Desktop\DAA codes>C:/Python311/python.exe "c:/Users/OMER/Desktop/DAA codes/BSTree.py"
+Inorder traversal:
 1 3 4 6 7 8 10 13 14
+Inorder traversal after deleting 6:
+1 3 4 7 8 10 13 14
